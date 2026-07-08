@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>OneDay — планировщик задач</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="container">
+    <h1>📋 OneDay</h1>
+    <p class="subtitle">План на день</p>
+    
+    <!-- Login/Registration block -->
+    <div class="auth">
+      <input type="email" id="emailInput" placeholder="Email">
+      <input type="password" id="passwordInput" placeholder="Пароль">
+      <button id="loginBtn">Войти</button>
+      <button id="registerBtn">Регистрация</button>
+      <button id="logoutBtn" style="display:none;">Выйти</button>
+    </div>
+
+    <!-- Task section (visible only to authorized users) -->
+    <div id="taskSection" style="display:none;">
+      <div class="add-task">
+        <input type="text" id="taskInput" placeholder="Что нужно сделать?">
+        <button id="addBtn">➕ Добавить</button>
+      </div>
+      <ul id="taskList"></ul>
+    </div>
+  </div>
+
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+
+  <script src="app.js"></script>
+</body>
+</html>
