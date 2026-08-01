@@ -1,11 +1,13 @@
 <!DOCTYPE html>
 <html lang="ru">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>OneDay — планировщик задач</title>
   <link rel="stylesheet" href="style.css">
 </head>
+
 <body>
   <div class="container">
     <div class="header">
@@ -13,8 +15,7 @@
       <p class="subtitle"><i>План на день</i></p>
       <button id="themeToggle" class="theme-btn">🌙</button>
     </div>
-    
-    <!-- Login/Registration block -->
+
     <div class="auth" id="authBlock">
       <input type="email" id="emailInput" placeholder="Email" autocomplete="email">
       <input type="password" id="passwordInput" placeholder="Пароль" autocomplete="current-password">
@@ -22,30 +23,30 @@
         <button id="loginBtn" class="btn-primary">Войти</button>
         <button id="registerBtn" class="btn-success">Регистрация</button>
       </div>
-      <button id="logoutBtn" class="btn-danger" style="display:none;">Выйти</button>
     </div>
 
-    <!-- Task section -->
     <div id="taskSection" style="display:none;">
       <div class="task-stats">
         <span id="taskCounter">📊 Осталось: 0</span>
-        <div class="filters">
-          <button class="filter-btn active" data-filter="all">Все</button>
-          <button class="filter-btn" data-filter="active">Активные</button>
-          <button class="filter-btn" data-filter="completed">Выполненные</button>
+        <div style="display: flex; align-items: center; gap: 10px;">
+          <div class="filters">
+            <button class="filter-btn active" data-filter="all">Все</button>
+            <button class="filter-btn" data-filter="active">Активные</button>
+            <button class="filter-btn" data-filter="completed">Выполненные</button>
+          </div>
+          <button id="logoutBtn" class="logout-btn-small hidden">Выйти</button>
         </div>
       </div>
-      
+
       <div class="add-task">
         <input type="text" id="taskInput" placeholder="Что нужно сделать?">
         <button id="addBtn">➕ Добавить</button>
       </div>
-      
+
       <ul id="taskList"></ul>
     </div>
   </div>
 
-  <!-- Toast notification -->
   <div id="toast" class="toast"></div>
 
   <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
@@ -53,4 +54,5 @@
   <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
   <script src="app.js"></script>
 </body>
+
 </html>

@@ -56,14 +56,14 @@ function showToast(message, type = 'info') {
     clearTimeout(toastTimeout);
     toast.classList.remove('show');
   }
-  
+
   toast.textContent = message;
   toast.className = 'toast ' + type;
-  
+
   // Trigger reflow
   void toast.offsetWidth;
   toast.classList.add('show');
-  
+
   toastTimeout = setTimeout(() => {
     toast.classList.remove('show');
     toastTimeout = null;
@@ -78,22 +78,22 @@ function validateEmail(email) {
 registerBtn.addEventListener('click', async () => {
   const email = emailInput.value.trim();
   const password = passwordInput.value.trim();
-  
+
   if (!email || !password) {
     showToast('❌ Введите email и пароль', 'error');
     return;
   }
-  
+
   if (!validateEmail(email)) {
     showToast('❌ Введите корректный email', 'error');
     return;
   }
-  
+
   if (password.length < 6) {
     showToast('❌ Пароль должен быть минимум 6 символов', 'error');
     return;
   }
-  
+
   try {
     await auth.createUserWithEmailAndPassword(email, password);
     showToast('✅ Регистрация успешна!', 'success');
@@ -105,17 +105,17 @@ registerBtn.addEventListener('click', async () => {
 loginBtn.addEventListener('click', async () => {
   const email = emailInput.value.trim();
   const password = passwordInput.value.trim();
-  
+
   if (!email || !password) {
     showToast('❌ Введите email и пароль', 'error');
     return;
   }
-  
+
   if (!validateEmail(email)) {
     showToast('❌ Введите корректный email', 'error');
     return;
   }
-  
+
   try {
     await auth.signInWithEmailAndPassword(email, password);
     showToast('✅ Добро пожаловать!', 'success');
@@ -156,21 +156,21 @@ auth.onAuthStateChanged(user => {
     authBlock.classList.add('hidden');
     loginBtn.style.display = 'none';
     registerBtn.style.display = 'none';
-    logoutBtn.style.display = 'block';
+    logoutBtn.classList.remove('hidden');
     taskSection.style.display = 'block';
-    
+
     subscribeToTasks();
   } else {
     currentUser = null;
     authBlock.classList.remove('hidden');
     loginBtn.style.display = 'block';
     registerBtn.style.display = 'block';
-    logoutBtn.style.display = 'none';
+    logoutBtn.classList.add('hidden');
     taskSection.style.display = 'none';
     taskList.innerHTML = '';
     allTasks = [];
     updateCounter();
-    
+
     if (unsubscribeTasks) {
       unsubscribeTasks();
       unsubscribeTasks = null;
@@ -180,11 +180,11 @@ auth.onAuthStateChanged(user => {
 
 function subscribeToTasks() {
   if (!currentUser) return;
-  
+
   if (unsubscribeTasks) {
     unsubscribeTasks();
   }
-  
+
   unsubscribeTasks = db.collection('users')
     .doc(currentUser.uid)
     .collection('tasks')
@@ -232,7 +232,7 @@ function updateCounter() {
 // --- RENDER ---
 function renderTasks() {
   const filtered = getFilteredTasks();
-  
+
   if (filtered.length === 0) {
     taskList.innerHTML = `
       <li class="empty-message">
@@ -241,7 +241,7 @@ function renderTasks() {
     `;
     return;
   }
-  
+
   taskList.innerHTML = filtered.map(task => {
     const isEditing = editingTaskId === task.id;
     return `
@@ -255,7 +255,7 @@ function renderTasks() {
       </li>
     `;
   }).join('');
-  
+
   // Event listeners
   document.querySelectorAll('[data-action="toggle"]').forEach(btn => {
     btn.addEventListener('click', (e) => {
@@ -264,7 +264,7 @@ function renderTasks() {
       toggleTask(id);
     });
   });
-  
+
   document.querySelectorAll('[data-action="delete"]').forEach(btn => {
     btn.addEventListener('click', (e) => {
       const li = e.target.closest('li');
@@ -272,7 +272,7 @@ function renderTasks() {
       deleteTask(id);
     });
   });
-  
+
   document.querySelectorAll('[data-action="edit"]').forEach(btn => {
     btn.addEventListener('click', (e) => {
       const li = e.target.closest('li');
@@ -280,7 +280,7 @@ function renderTasks() {
       startEditing(id);
     });
   });
-  
+
   // Double-click to edit
   document.querySelectorAll('.task-text:not(.editing)').forEach(el => {
     el.addEventListener('dblclick', (e) => {
@@ -289,7 +289,7 @@ function renderTasks() {
       startEditing(id);
     });
   });
-  
+
   // Handle editing
   document.querySelectorAll('.task-text.editing').forEach(el => {
     el.addEventListener('blur', (e) => {
@@ -304,15 +304,13 @@ function renderTasks() {
         cancelEditing(e.target);
       }
     });
-    // Focus and select all text
     el.focus();
-    document.execCommand('selectAll', false, null);
+    el.setSelectionRange(0, el.textContent.length);
   });
 }
 
 function startEditing(id) {
   if (editingTaskId) {
-    // Cancel previous editing
     const prev = document.querySelector(`.task-text.editing[data-id="${editingTaskId}"]`);
     if (prev) cancelEditing(prev);
   }
@@ -323,13 +321,13 @@ function startEditing(id) {
 function saveEditing(el) {
   const id = el.dataset.id;
   const newText = el.textContent.trim();
-  
+
   if (!newText) {
     showToast('❌ Текст не может быть пустым', 'error');
     cancelEditing(el);
     return;
   }
-  
+
   const task = allTasks.find(t => t.id === id);
   if (task && task.text !== newText) {
     db.collection('users')
@@ -339,7 +337,7 @@ function saveEditing(el) {
       .update({ text: newText })
       .catch(err => showToast('❌ Ошибка обновления: ' + err.message, 'error'));
   }
-  
+
   editingTaskId = null;
   renderTasks();
 }
@@ -349,19 +347,18 @@ function cancelEditing(el) {
   renderTasks();
 }
 
-// --- CRUD ---
 addBtn.addEventListener('click', async () => {
   if (!currentUser) {
     showToast('❌ Сначала войдите в систему', 'error');
     return;
   }
-  
+
   const text = taskInput.value.trim();
   if (!text) {
     showToast('❌ Введите текст задачи', 'error');
     return;
   }
-  
+
   try {
     await db.collection('users')
       .doc(currentUser.uid)
@@ -389,7 +386,7 @@ async function toggleTask(id) {
   if (!currentUser) return;
   const task = allTasks.find(t => t.id === id);
   if (!task) return;
-  
+
   try {
     await db.collection('users')
       .doc(currentUser.uid)
@@ -404,7 +401,7 @@ async function toggleTask(id) {
 async function deleteTask(id) {
   if (!currentUser) return;
   if (!confirm('🗑️ Удалить задачу?')) return;
-  
+
   try {
     await db.collection('users')
       .doc(currentUser.uid)
@@ -423,7 +420,6 @@ function escapeHtml(text) {
   return div.innerHTML;
 }
 
-// Enter key for auth
 emailInput.addEventListener('keypress', (e) => {
   if (e.key === 'Enter') {
     passwordInput.focus();
