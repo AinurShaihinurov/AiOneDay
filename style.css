@@ -168,7 +168,6 @@ body.dark .auth input {
   opacity: 0.9;
 }
 
-
 .task-stats {
   display: flex;
   justify-content: space-between;
@@ -424,21 +423,26 @@ body.dark #taskList li button:hover {
   .container {
     padding: 20px;
   }
-  
+
   .auth-buttons {
     flex-direction: column;
   }
-  
+
   .add-task {
     flex-direction: column;
   }
-  
+
   .task-stats {
     flex-direction: column;
     align-items: stretch;
     text-align: center;
   }
-  
+
+  .task-stats > div {
+    justify-content: center !important;
+    flex-wrap: wrap;
+  }
+
   .filters {
     justify-content: center;
   }
@@ -448,10 +452,11 @@ body.dark #taskList li button:hover {
   }
 }
 
+/* --- Исправленные стили для кнопки "Выйти" --- */
 .logout-btn-small {
   padding: 4px 12px;
-  background: #e74c3c;
-  color: white;
+  background-color: #e74c3c !important;
+  color: white !important;
   border: none;
   border-radius: 12px;
   font-size: 13px;
@@ -459,6 +464,7 @@ body.dark #taskList li button:hover {
   cursor: pointer;
   transition: opacity 0.2s, transform 0.2s;
   white-space: nowrap;
+  flex-shrink: 0;
 }
 
 .logout-btn-small:hover {
